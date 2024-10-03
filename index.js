@@ -318,17 +318,21 @@ function toggleSidebar(isVisible) {
 
 // Open edit task modal
 function openEditTaskModal(task) {
-  elements.editTaskTitle.value = task.title;
-  elements.editTaskDesc.value = task.description;
-  elements.editTaskStatus.value = task.status;
-
-  toggleModal(true, elements.editTaskModal);
+  if (elements.editTaskTitle && elements.editTaskDesc && elements.editTaskStatus) {
+    elements.editTaskTitle.value = task.title || '';
+    elements.editTaskDesc.value = task.description || '';
+    elements.editTaskStatus.value = task.status || '';
+    elements.editTaskModal.setAttribute('data-task-id', task.id); // Set task ID for later use
+    toggleModal(true, elements.editTaskModal);
+  } else {
+    console.error('One or more elements required for editing a task are missing.');
+  }
 }
 
 // Handle adding a task
 function handleAddTask(event) {
   event.preventDefault();
-  
+
   const newTask = {
     title: elements.addTaskForm.elements['task-title'].value,
     description: elements.addTaskForm.elements['task-description'].value,

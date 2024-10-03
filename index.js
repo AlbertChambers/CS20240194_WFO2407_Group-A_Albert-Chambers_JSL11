@@ -25,7 +25,7 @@ initializeData();
 function renderTasks() {
   const tasks = getTasks();
   const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
-  const doingContainer = document.querySelector('[data-status="doing]" .tasks-container');
+  const doingContainer = document.querySelector('[data-status="doing"] .tasks-container');
   const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
 
   todoContainer.innerHTML = '';
@@ -33,25 +33,25 @@ function renderTasks() {
   doneContainer.innerHTML = '';
 
   tasks.forEach(task => {
-    const taskDiv = document.createElement('div')
+    const taskDiv = document.createElement('div');
     taskDiv.innerHTML = `
       <h5>${task.title}</h5>
       <p>${task.description}</p>
     `;
-  taskDiv.setAttribute('data-task-id', task.id);
+    taskDiv.setAttribute('data-task-id', task.id);
 
-  // Handle click to open modal
-  taskDiv.addEventlistener('click', () => openEditTaskModal(task));
+    // Handle click to open modal
+    taskDiv.addEventListener('click', () => openEditTaskModal(task));
 
-  switch (task.status) {
-    case 'done':
+    switch (task.status) {
+      case 'done':
         doneContainer.appendChild(taskDiv);
         break;
-    case 'doing':
+      case 'doing':
         doingContainer.appendChild(taskDiv);
         break;
-    case 'todo':
-    default:
+      case 'todo':
+      default:
         todoContainer.appendChild(taskDiv);
         break;
     }
@@ -67,9 +67,9 @@ const elements = {
   headerBoardName: document.querySelector(".header-board-name"),
   cancelEditBtn: document.getElementById("cancel-edit-btn"),
   cancelAddTaskBtn: document.getElementById("cancel-add-task-btn"),
-  filterDiv: document.getElementById("filter-div"),
-  hideSideBarBtn: document.getElementById("hide-sidebar-btn"),
-  showSideBarBtn: document.getElementById("show-sidebar-btn"),
+  filterDiv: document.getElementById("filterDiv"),
+  hideSideBarBtn: document.getElementById("hide-side-bar-btn"),
+  showSideBarBtn: document.getElementById("show-side-bar-btn"),
   themeSwitch: document.getElementById("theme-switch"),
   createNewTaskBtn: document.getElementById("create-new-task-btn"),
   addTaskForm: document.getElementById("add-task-form"),
@@ -202,43 +202,74 @@ function addTaskToUI(task) {
 function setupEventListeners() {
   // Cancel editing task event listener
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal));
+  if (cancelEditBtn) { // Ensure the element exists
+    cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal));
+  } else {
+    console.error('Element with ID "cancel-edit-btn" not found.');
+  }
 
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
-  cancelAddTaskBtn.addEventListener('click', () => {
-    toggleModal(false);
-    elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
-  });
+  if (cancelAddTaskBtn) { // Ensure the element exists
+    cancelAddTaskBtn.addEventListener('click', () => {
+      toggleModal(false);
+      elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
+    });
+  } else {
+    console.error('Element with ID "cancel-add-task-btn" not found.');
+  }
 
   // Clicking outside the modal to close it
-  elements.filterDiv.addEventListener('click', () => {
-    toggleModal(false);
-    elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
-  });
+  if (elements.filterDiv) {
+    elements.filterDiv.addEventListener('click', () => {
+      toggleModal(false);
+      elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
+    });
+  } else {
+    console.error('Element with ID "filter-div" not found.');
+  }
 
   // Show sidebar event listener
-  elements.hideSideBarBtn.addEventListener('click', () => toggleSidebar(false));
-  elements.showSideBarBtn.addEventListener ('click', () => toggleSidebar(true));
+  const hideSideBarBtn = document.getElementById('hide-side-bar-btn');
+  if (hideSideBarBtn) {
+    hideSideBarBtn.addEventListener('click', () => toggleSidebar(false));
+  } else {
+    console.error('Element with ID "hide-sidebar-btn" not found.');
+  }
+
+  const showSideBarBtn = document.getElementById('show-side-bar-btn');
+  if (showSideBarBtn) {
+    showSideBarBtn.addEventListener('click', () => toggleSidebar(true));
+  } else {
+    console.error('Element with ID "show-side-bar-btn" not found.');
+  }
 
   // Theme switch event listener
-  elements.themeSwitch.addEventListener('change', toggleTheme);
+  const themeSwitch = document.getElementById('theme-switch');
+  if (themeSwitch) {
+    themeSwitch.addEventListener('change', toggleTheme);
+  } else {
+    console.error('Element with ID "theme-switch" not found.');
+  }
 
   // Show Add New Task Modal event listener
-  elements.createNewTaskBtn.addEventListener('click', () => {
-    toggleModal(true);
-    elements.filterDiv.style.display = 'block'; // Also show the filter overlay
-  });
+  const createNewTaskBtn = document.getElementById('create-new-task-btn');
+  if (createNewTaskBtn) {
+    createNewTaskBtn.addEventListener('click', () => {
+      toggleModal(true);
+      elements.filterDiv.style.display = 'block'; // Also show the filter overlay
+    });
+  } else {
+    console.error('Element with ID "create-new-task-btn" not found.');
+  }
 
   // Add new task form submission event listener
-  elements.addTaskForm.addEventListener('submit', (event) => {
-    addTask(event)
-  });
-}
-
-// Toggles tasks modal
-function toggleModal(show, modal = elements.taskModal) {
-  modal.style.display = show ? 'block' : 'none';
+  const addTaskForm = document.getElementById('add-task-form');
+  if (addTaskForm) {
+    addTaskForm.addEventListener('submit', (event) => addTask(event));
+  } else {
+    console.error('Element with ID "add-task-form" not found.');
+  }
 }
 
 /*************************************************************************************************************************************************
@@ -337,9 +368,7 @@ async function saveTaskChanges(taskId) {
 
 /*************************************************************************************************************************************************/
 
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-});
+document.addEventListener('DOMContentLoaded', init());
 
 function init() {
   setupEventListeners();
@@ -349,3 +378,6 @@ function init() {
   document.body.classList.toggle('light-theme', isLightTheme);
   fetchAndDisplayBoardsAndTasks(); // Initial display of boards and tasks
 }
+
+init()
+

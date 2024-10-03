@@ -65,28 +65,69 @@ renderTasks();
 
 // TASK: Get elements from the DOM
 const elements = {
-  columnDivs: document.querySelectorAll(".column-div"),
-  boardsContainer: document.getElementById("boards-nav-links-div"),
-  headerBoardName: document.querySelector(".header-board-name"),
-  cancelEditBtn: document.getElementById("cancel-edit-btn"),
-  cancelAddTaskBtn: document.getElementById("cancel-add-task-btn"),
-  filterDiv: document.getElementById("filterDiv"),
-  hideSideBarBtn: document.getElementById("hide-side-bar-btn"),
-  showSideBarBtn: document.getElementById("show-side-bar-btn"),
-  themeSwitch: document.getElementById("theme-switch"),
-  createNewTaskBtn: document.getElementById("create-task-btn"),
-  addTaskForm: document.getElementById("add-task-form"),
-  editTaskTitle: document.getElementById("edit-task-title"),
-  editTaskDesc: document.getElementById("edit-task-desc"),
-  editTaskStatus: document.getElementById("edit-task-status"),
-  saveTaskBtn: document.getElementById("save-task-changes-btn"),
-  deleteTaskBtn: document.getElementById("delete-task-btn"),
-  taskModal: document.getElementById("task-modal"),
-  editTaskModal: document.getElementById("edit-task-modal"),
-  sidebarDiv: document.querySelector(".sidebar-div"),
-  showSidebarDiv: document.querySelector(".show-sidebar-div"),
-  body: document.body
-}
+    sideBarDiv: document.getElementById('side-bar-div'),
+    sideLogoDiv: document.getElementById('side-logo-div'),
+    logoImg: document.getElementById('logo'),
+    boardsNavLinksDiv: document.getElementById('boards-nav-links-div'),
+    headlineSidepanel: document.getElementById('headline-sidepanel'),
+    switchThemeCheckbox: document.getElementById('switch'),
+    labelCheckboxTheme: document.getElementById('label-checkbox-theme'),
+    iconDarkTheme: document.getElementById('icon-dark'),
+    iconLightTheme: document.getElementById('icon-light'),
+    hideSideBarDiv: document.querySelector('.hide-side-bar-div'), // Using querySelector for class
+    hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
+    showSideBarBtn: document.getElementById('show-side-bar-btn'),
+
+    layoutDiv: document.getElementById('layout'),
+    headerDiv: document.getElementById('header'),
+    headerBoardName: document.getElementById('header-board-name'),
+    dropdownBtn: document.getElementById('dropdownBtn'),
+    dropDownIcon: document.getElementById('dropDownIcon'),
+    addNewTaskBtn: document.getElementById('add-new-task-btn'),
+    editBoardBtn: document.getElementById('edit-board-btn'),
+    editBoardDiv: document.getElementById('editBoardDiv'),
+    deleteBoardBtn: document.getElementById('deleteBoardBtn'),
+
+    containerDiv: document.querySelector('.container'), // Using querySelector for class
+    cardColumnMain: document.querySelector('.card-column-main'), // Using querySelector for class
+
+    // Task Column Elements
+    todoHeadDiv: document.getElementById('todo-head-div'),
+    todoDot: document.getElementById('todo-dot'),
+    toDoText: document.getElementById('toDoText'),
+
+    doingHeadDiv: document.getElementById('doing-head-div'),
+    doingDot: document.getElementById('doing-dot'),
+    doingText: document.getElementById('doingText'),
+
+    doneHeadDiv: document.getElementById('done-head-div'),
+    doneDot: document.getElementById('done-dot'),
+    doneText: document.getElementById('doneText'),
+
+    newTaskModalWindow: document.getElementById('new-task-modal-window'),
+    modalTitleInput: document.getElementById('modal-title-input'),
+    titleInput: document.getElementById('title-input'),
+    modalDescInput: document.getElementById('modal-desc-input'),
+    descInput: document.getElementById('desc-input'),
+    modalSelectStatus: document.getElementById('modal-select-status'),
+    selectStatus: document.getElementById('select-status'),
+    createTaskBtn: document.getElementById('create-task-btn'),
+    cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
+
+    editTaskModalWindow: document.querySelector('.edit-task-modal-window'), // Using querySelector for class
+    editTaskForm: document.getElementById('edit-task-form'),
+    editTaskHeader: document.getElementById('edit-task-header'),
+    editTaskTitleInput: document.getElementById('edit-task-title-input'),
+    editBtn: document.getElementById('edit-btn'),
+    editTaskDescInput: document.getElementById('edit-task-desc-input'),
+    editSelectStatus: document.getElementById('edit-select-status'),
+    saveTaskChangesBtn: document.getElementById('save-task-changes-btn'),
+    cancelEditBtn: document.getElementById('cancel-edit-btn'),
+    deleteTaskBtn: document.getElementById('delete-task-btn'),
+
+    filterDiv: document.getElementById('filterDiv')
+};
+
 
 let activeBoard = "";
 

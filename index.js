@@ -264,6 +264,7 @@ async function addTask(event) {
       toggleModal(false);
       elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
       event.target.reset();
+      saveTasks();
       refreshTasksUI();
     }
   } catch (error) {
@@ -290,7 +291,7 @@ async function openEditTaskModal(task) {
 
   // Get button elements from the task modal
   elements.saveTaskBtn.onclick = async () => {
-    await saveTaskChanges(task.id);
+    saveTaskChanges(task.id);
   };
 
   // Delete task using a helper function and close the task modal
@@ -301,7 +302,7 @@ async function openEditTaskModal(task) {
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
 }
 
-function saveTaskChanges(taskId) {
+async function saveTaskChanges(taskId) {
   const updatedTask = {
     id: taskId,
     title: elements.editTaskTitle.value,
@@ -310,18 +311,20 @@ function saveTaskChanges(taskId) {
     board: activeBoard
   };
 
-  // Update task using a helper function
-   patchTask(taskId, updatedTask);
-
-  // Close the modal and refresh the UI to reflect the changes
-  toggleModal(false, elements.editTaskModal);
-  refreshTasksUI();
-}
+  // Update task using a helper function. Close the modal and refresh the UI to reflect the changes
+  try {
+    await patchTask(taskId, updatedTask); // Patch task using the helper function
+    saveTasks(); // Save updated tasks to storage
+    toggleModal(false, elements.editTaskModal); // Close modal after saving
+    refreshTasksUI(); // Refresh UI
+  } catch (error) {
+    console.error("Failed to save task changes:", error);
+}};
 
 /*************************************************************************************************************************************************/
 
-document.addEventListener('DOMContentLoaded', function() {
-  init(); // init is called after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  init();
 });
 
 function init() {

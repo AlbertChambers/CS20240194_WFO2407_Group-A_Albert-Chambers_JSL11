@@ -20,9 +20,9 @@ initializeData();
 
 function renderTasks() {
   const tasks = getTasks();
-  // const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
-  //const doingContainer = document.querySelector('data-status="doing" .tasks-container');
- // const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
+  const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
+  const doingContainer = document.querySelector('data-status="doing" .tasks-container');
+  const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
 
   todoContainer.innerHTML = '';
   doingContainer.innerHTML = '';
@@ -58,9 +58,6 @@ renderTasks();
 
 // TASK: Get elements from the DOM
 const elements = {
-  todoContainer: document.querySelector('[data-status="todo"] .tasks-container'),
-  doingContainer: document.querySelector('[data-status="doing"] .tasks-container'),
-  doneContainer: document.querySelector('[data-status="done"] .tasks-container'),
   boardsContainer: document.getElementById('boards-nav-links-div'),
   headerBoardName: document.querySelector('.header-board-name'),
   cancelEditBtn: document.getElementById('cancel-edit-btn'),
@@ -100,7 +97,6 @@ function fetchAndDisplayBoardsAndTasks() {
 }
 
 // Creates different boards in the DOM
-// TASK: Fix Bugs
 function displayBoards(boards) {
   const boardsContainer = document.getElementById("boards-nav-links-div");
   boardsContainer.innerHTML = ''; // Clears the container
@@ -108,13 +104,13 @@ function displayBoards(boards) {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.click()  {
+    boardElement.addEventListener('click', () => {
       elements.headerBoardName.textContent = board;
       filterAndDisplayTasksByBoard(board);
       activeBoard = board;//assigns active board
       localStorage.setItem("activeBoard", JSON.stringify(activeBoard));
       styleActiveBoard(activeBoard);
-    };
+    });
     boardsContainer.appendChild(boardElement);
   });
 

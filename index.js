@@ -8,20 +8,24 @@ import { initialData } from "./initialData";
 
 // Function checks if local storage already has data, if not it loads initialData to localStorage
 function initializeData() {
-  if (!localStorage.getItem('tasks')) {
-    localStorage.setItem('tasks', JSON.stringify(initialData));
-    localStorage.setItem('showSideBar', 'true')
-  } else {
-    console.log('Data already exists in localStorage');
+  try {
+    if (!localStorage.getItem("tasks")) {
+      localStorage.setItem("tasks", JSON.stringify(initialData));
+      localStorage.setItem("showSideBar", "true");
+    } else {
+      console.log("Data already exists in localStorage");
+    }
+  } catch (error) {
+    console.error("Failed to initialize data:", error);
   }
-};
+}
 
 initializeData();
 
 function renderTasks() {
   const tasks = getTasks();
   const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
-  const doingContainer = document.querySelector('data-status="doing" .tasks-container');
+  const doingContainer = document.querySelector('[data-status="doing]" .tasks-container');
   const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
 
   todoContainer.innerHTML = '';
@@ -37,7 +41,7 @@ function renderTasks() {
   taskDiv.setAttribute('data-task-id', task.id);
 
   // Handle click to open modal
-  task.Div.addEventlistener('click', () => openEditTaskModal(task));
+  taskDiv.addEventlistener('click', () => openEditTaskModal(task));
 
   switch (task.status) {
     case 'done':
@@ -122,7 +126,6 @@ function filterAndDisplayTasksByBoard(boardName) {
   const filteredTasks = tasks.filter(task => task.board === boardName);
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
-
   elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
     // Reset column content while preserving the column title
@@ -134,7 +137,7 @@ function filterAndDisplayTasksByBoard(boardName) {
     const tasksContainer = document.createElement("div");
     column.appendChild(tasksContainer);
 
-    filteredTasks.filter(task => task.status = status).forEach(task => {
+    filteredTasks.filter(task => task.status === status).forEach(task => {
       const taskElement = document.createElement("div");
       taskElement.classList.add("task-div");
       taskElement.textContent = task.title;
@@ -168,6 +171,7 @@ function styleActiveBoard(boardName) {
   });
 }
 
+// let originalTask = null;
 
 function addTaskToUI(task) {
   const column = document.querySelector('.column-div[data-status="${task.status}"]');
@@ -181,15 +185,16 @@ function addTaskToUI(task) {
     console.warn(`Tasks container not found for status: ${task.status}, creating one.`);
     tasksContainer = document.createElement("div");
     tasksContainer.className = 'tasks-container';
+
     column.appendChild(tasksContainer);
   }
 
   const taskElement = document.createElement("div");
-  taskElement.classList.add = "task-div";
+  taskElement.className = "task-div";
   taskElement.textContent = task.title; // Modify as needed
   taskElement.setAttribute('data-task-id', task.id);
 
-  tasksContainer.appendChild();
+  tasksContainer.appendChild(taskElement);
 }
 
 

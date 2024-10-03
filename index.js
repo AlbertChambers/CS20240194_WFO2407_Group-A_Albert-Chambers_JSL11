@@ -20,9 +20,9 @@ initializeData();
 
 function renderTasks() {
   const tasks = getTasks();
-  const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
-  const doingContainer = document.querySelector('data-status="doing" .tasks-container');
-  const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
+  // const todoContainer = document.querySelector('[data-status="todo"] .tasks-container');
+  //const doingContainer = document.querySelector('data-status="doing" .tasks-container');
+ // const doneContainer = document.querySelector('[data-status="done"] .tasks-container');
 
   todoContainer.innerHTML = '';
   doingContainer.innerHTML = '';
@@ -58,7 +58,29 @@ renderTasks();
 
 // TASK: Get elements from the DOM
 const elements = {
-
+  todoContainer: document.querySelector('[data-status="todo"] .tasks-container'),
+  doingContainer: document.querySelector('[data-status="doing"] .tasks-container'),
+  doneContainer: document.querySelector('[data-status="done"] .tasks-container'),
+  boardsContainer: document.getElementById('boards-nav-links-div'),
+  headerBoardName: document.querySelector('.header-board-name'),
+  cancelEditBtn: document.getElementById('cancel-edit-btn'),
+  cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
+  filterDiv: document.getElementById('filter-div'),
+  hideSidebarBtn: document.getElementById('hide-sidebar-btn'),
+  showSidebarBtn: document.getElementById('show-sidebar-btn'),
+  themeSwitch: document.getElementById('theme-switch'),
+  createNewTaskBtn: document.getElementById('create-new-task-btn'),
+  addTaskForm: document.getElementById('add-task-form'),
+  editTaskTitle: document.getElementById('edit-task-title'),
+  editTaskDesc: document.getElementById('edit-task-desc'),
+  editTaskStatus: document.getElementById('edit-task-status'),
+  saveTaskBtn: document.getElementById('save-task-btn'),
+  deleteTaskBtn: document.getElementById('delete-task-btn'),
+  taskModal: document.getElementById('task-modal'),
+  editTaskModal: document.getElementById('edit-task-modal'),
+  sidebarDiv: document.querySelector('.sidebar-div'),
+  showSidebarDiv: document.querySelector('.show-sidebar-div'),
+  body: document.body
 }
 
 let activeBoard = ""

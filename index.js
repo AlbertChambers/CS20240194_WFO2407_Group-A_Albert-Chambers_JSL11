@@ -64,8 +64,8 @@ const elements = {
   cancelEditBtn: document.getElementById("cancel-edit-btn"),
   cancelAddTaskBtn: document.getElementById("cancel-add-task-btn"),
   filterDiv: document.getElementById("filter-div"),
-  hideSidebarBtn: document.getElementById("hide-sidebar-btn"),
-  showSidebarBtn: document.getElementById("show-sidebar-btn"),
+  hideSideBarBtn: document.getElementById("hide-sidebar-btn"),
+  showSideBarBtn: document.getElementById("show-sidebar-btn"),
   themeSwitch: document.getElementById("theme-switch"),
   createNewTaskBtn: document.getElementById("create-new-task-btn"),
   addTaskForm: document.getElementById("add-task-form"),
@@ -117,7 +117,6 @@ function displayBoards(boards) {
 }
 
 // Filters tasks corresponding to the board name and displays them on the DOM.
-// TASK: Fix Bugs
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
   const filteredTasks = tasks.filter(task => task.board === boardName);
@@ -198,7 +197,7 @@ function addTaskToUI(task) {
 function setupEventListeners() {
   // Cancel editing task event listener
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.click() => toggleModal(false, elements.editTaskModal));
+  cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal));
 
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
@@ -214,8 +213,8 @@ function setupEventListeners() {
   });
 
   // Show sidebar event listener
-  elements.hideSideBarBtn.click() => toggleSidebar(false));
-  elements.showSideBarBtn.click() => toggleSidebar(true));
+  elements.hideSideBarBtn.addEventListener('click', () => toggleSidebar(false));
+  elements.showSideBarBtn.addEventListener ('click', () => toggleSidebar(true));
 
   // Theme switch event listener
   elements.themeSwitch.addEventListener('change', toggleTheme);
@@ -227,13 +226,13 @@ function setupEventListeners() {
   });
 
   // Add new task form submission event listener
-  elements.modalWindow.addEventListener('submit',  (event) => {
+  elements.addTaskForm.addEventListener('submit', (event) => {
     addTask(event)
   });
 }
 
 // Toggles tasks modal
-function toggleModal(show, modal = elements.modalWindow) {
+function toggleModal(show, modal = elements.taskModal) {
   modal.style.display = show ? 'block' : 'none';
 }
 

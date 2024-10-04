@@ -7,7 +7,7 @@ export const getTasks = () => {
 };
 
 // Simulate saving tasks to localStorage
-export const saveTasks = (tasks) => {
+const saveTasks = (tasks) => {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 

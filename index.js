@@ -111,69 +111,112 @@ let activeBoard = "";
 
 // Extracts unique board names from tasks and displays them
 function fetchAndDisplayBoardsAndTasks() {
-  const tasks = getTasks();
+  const tasks = getTasks(); /* fetching all of the task from loacal Storage */
   const boards = [...new Set(tasks.map(task => task.board).filter(Boolean))];
   displayBoards(boards);
+
   if (boards.length > 0) {
-    const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"));
-    activeBoard = localStorageBoard ? localStorageBoard : boards[0];
-    document.querySelector('.header-board-name').textContent = activeBoard;
-    styleActiveBoard(activeBoard);
-    refreshTasksUI();
+    const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
+    activeBoard = localStorageBoard || boards[0]; 
+    elements.headerBoardName.textContent = activeBoard
+    styleActiveBoard(activeBoard)
+    filterAndDisplayTasksByBoard(activeBoard);
   }
 }
 
+
 // Function to display boards in the sidebar
 function displayBoards(boards) {
-  elements.boardsNavLinksDiv.innerHTML = '';
+  const boardsContainer = document.getElementById("boards-nav-links-div");
+  boardsContainer.innerHTML = '';
   boards.forEach(board => {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.addEventListener('click', () => {
+    boardElement.addEventListener("click",() =>  {
       elements.headerBoardName.textContent = board;
-      filterAndDisplayTasksByBoard(board);
-      activeBoard = board;
-      localStorage.setItem("activeBoard", JSON.stringify(activeBoard));
-      styleActiveBoard(activeBoard);
+      activeBoard = board
+      localStorage.setItem("activeBoard", JSON.stringify(activeBoard))
+      styleActiveBoard(activeBoard)
+      filterAndDisplayTasksByBoard(activeBoard);
     });
-    elements.boardsNavLinksDiv.appendChild(boardElement);
+    boardsContainer.appendChild(boardElement);
   });
 }
 
 // Filters and displays tasks based on board and status
 function filterAndDisplayTasksByBoard(boardName) {
-  const tasks = getTasks();
-  const filteredTasks = tasks.filter(task => task.board === boardName);
+  const tasks = getTasks(); // Fetch tasks from a simulated local storage function
+  const filteredTasks = tasks.filter(task => task.board === boardName); /* === to compare the task at hand */
 
-  elements.cardColumnMain.querySelectorAll('.column-div').forEach(column => {
+  // Ensure the column titles are set outside of this function or correctly initialized before this function runs
+
+  function filterAndDisplayTasksByBoard(boardName) {
+  const tasks = getTasks(); // Fetch tasks from a simulated local storage function
+  const filteredTasks = tasks.filter(task => task.board === boardName); /* === to compare the task at hand */
+
+  // Ensure the column titles are set outside of this function or correctly initialized before this function runs
+
+  elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
-    const tasksContainer = column.querySelector(".tasks-container");
-    tasksContainer.innerHTML = '';
+    // Reset column content while preserving the column title
+    column.innerHTML = `<div class="column-head-div">
+                          <span class="dot" id="${status}-dot"></span>
+                          <h4 class="columnHeader">${status.toUpperCase()}</h4>
+                        </div>`;
 
-    filteredTasks.filter(task => task.status === status).forEach(task => {
+   // Filter tasks based on the current column status
+   const tasksContainer = column.querySelector('.tasks-container');
+   const taskForColumn = filteredTasks.filter(task => task.status === status);
+
+   taskForColumn .forEach(task => {  /* fixed comparison operator for status */
       const taskElement = document.createElement("div");
       taskElement.classList.add("task-div");
-      taskElement.textContent = task.title;
+      taskElement.innerHTML = `
+        <h4>${task.title}</h4>
+      `;
       taskElement.setAttribute('data-task-id', task.id);
 
-      // Open task in edit modal when clicked
-      taskElement.addEventListener('click', () => openEditTaskModal(task));
-
-      tasksContainer.appendChild(taskElement);
+      // Listen for a click event on each task and open a modal
+     taskElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+        openEditTaskModal(task);
+      });
+      column.appendChild(taskElement);
     });
   });
 }
 
 // Refreshes the UI after updating tasks
 function refreshTasksUI() {
-  filterAndDisplayTasksByBoard(activeBoard);
-}
+  const tasks = getTasks();
+  const filteredTasks = tasks.filter(task => task.board === activeBoard);
+
+// Loop and clear existing tasks
+  elements.columnDivs.forEach(column => {
+    const status = column.getAttribute("data-status");
+    const tasksContainer = column.querySelector('.tasks-container') || column.appendChild(document.createElement('div'));
+    tasksContainer.className = 'tasks-container';
+  })
+   tasksContainer.innerHTML = '';
+
+   // Add tasks for this column
+   const tasksForColumn = filteredTasks.filter(task => task.status === status);
+   tasksForColumn.forEach(task => {
+     const taskElement = createTaskElement(task);
+     tasksContainer.appendChild(taskElement);
+   });
+  };
 
 // Styles the active board button
 function styleActiveBoard(boardName) {
   document.querySelectorAll(".board-btn").forEach(btn => {
-    btn.classList.toggle('active', btn.textContent === boardName);
+    if(btn.textContent === boardName) {
+      btn.classList.add('active')
+    }
+    else {
+      btn.classList.remove('active');
+    }
   });
 }
 
@@ -299,13 +342,22 @@ function handleSaveTask() {
   toggleModal(false, elements.editTaskModalWindow);
 }
 
-// Handle task deletion
 function handleDeleteTask() {
   const taskId = elements.deleteTaskBtn.getAttribute('data-task-id');
-  deleteTask(taskId);
+  if (!taskId) {
+    console.error("No task ID found for deletion");
+    return;
+  }
 
-  refreshTasksUI();
-  toggleModal(false, elements.editTaskModalWindow);
+  // Call deleteTask and check if it was successful
+  const success = deleteTask(taskId);
+  if (success) {
+    console.log(`Task with ID ${taskId} deleted successfully.`);
+    refreshTasksUI(); // Refresh the UI to show the updated task list
+    toggleModal(false, elements.editTaskModalWindow);
+  } else {
+    console.error("Failed to delete the task. Task may not exist.");
+  }
 }
 
 // Function to toggle the visibility of modals
@@ -318,6 +370,7 @@ function toggleSidebar(show) {
   elements.sideBarDiv.style.display = show ? 'block' : 'none';
   elements.showSideBarBtn.style.display = show ? 'none' : 'block';
 }
+
 
 // Initialize the app
 function init() {

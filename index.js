@@ -5,7 +5,6 @@ import {initialData} from "./initialData.js";
  * FIX BUGS!!!
  * **********************************************************************************************************************************************/
 
-
 // loads initialData to localStorage
 function initializeData() {
   if (!localStorage.getItem('tasks')) {
@@ -54,7 +53,7 @@ const elements = {
   newTaskModalWindow: document.getElementById('new-task-modal-window'),
 }
 
-let activeBoard = "" /* activeBoard acts a global varaible */
+let activeBoard = "";
 
 // Extracts board names
 function fetchAndDisplayBoardsAndTasks() {
@@ -132,27 +131,30 @@ function refreshTasksUI() {
   const tasks = getTasks();
   const filteredTasks = tasks.filter(task => task.board === activeBoard);
 
-  // Clear tasks
+  // Loop through each column (todo, doing, done) and clear existing tasks
   elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
-
-    // Tasks container
     let tasksContainer = column.querySelector('.tasks-container');
+
+    // If tasksContainer doesn't exist, create it
     if (!tasksContainer) {
       tasksContainer = document.createElement('div');
       tasksContainer.className = 'tasks-container';
       column.appendChild(tasksContainer);
+    } else {
+      // Clear existing tasks in the container
+      tasksContainer.innerHTML = '';
     }
-    tasksContainer.innerHTML = '';
 
     // Add tasks for this column
     const tasksForColumn = filteredTasks.filter(task => task.status === status);
     tasksForColumn.forEach(task => {
-      const taskElement = createTaskElement(task);
-      tasksContainer.appendChild(taskElement);
+      const taskElement = createTaskElement(task); // Create a task element for each task
+      tasksContainer.appendChild(taskElement); // Add each task to the column's container
     });
   });
 }
+
 
 // Styles active board
 function styleActiveBoard(boardName) {
@@ -200,30 +202,30 @@ function addTaskToUI(task) {
 }
 
 function setupEventListeners() {
-  // Cancel edit task
+
+  // Cancel editing
   elements.cancelEditBtn.addEventListener("click", closeEditModal)
   elements.cancelAddTaskBtn.addEventListener('click', () => {
     toggleModal(false, elements.newTaskModalWindow);
     resetNewTaskForm();
   });
 
-  // Show sidebar
+  // Sidebar
   elements.hideSidebarBtn.addEventListener("click", () => toggleSidebar(false));
   elements.showSidebarBtn.addEventListener("click", () => toggleSidebar(true));
   elements.switchToggle.addEventListener('change', toggleTheme);
-
-  // Click outside to close modal
-  elements.filterDiv.addEventListener('click', () => {
-    toggleModal(false);
-    elements.filterDiv.style.display = 'none'; // Also hide the filter overlay
-  });
-
   elements.addNewTaskBtn.addEventListener('click', () => {
     toggleModal(true, elements.newTaskModalWindow);
     elements.filterDiv.style.display = 'block';
   })
 
-  // New Task Modal
+  // Click outside to close modal
+  elements.filterDiv.addEventListener('click', () => {
+    toggleModal(false);
+    elements.filterDiv.style.display = 'none';
+  });
+
+    // New Task Modal
   elements.editTaskModalWindow = document.querySelector('.edit-task-modal-window');
   elements.editTaskTitleInput = document.getElementById('edit-task-title-input');
   elements.editTaskDescInput = document.getElementById('edit-task-desc-input');
@@ -232,7 +234,7 @@ function setupEventListeners() {
   elements.cancelEditBtn = document.getElementById('cancel-edit-btn');
   elements.deleteTaskBtn = document.getElementById('delete-task-btn');
 
-  // New task form
+  // New task form submission
   elements.newTaskModalWindow.addEventListener('submit',  (event) => {
     addTask(event)
   });
@@ -316,17 +318,16 @@ function setInitialTheme() {
   const savedTheme = localStorage.getItem('theme');
   const themeSwitch = document.getElementById('switch');
 
-  // Check if savedTheme is dark; otherwise, default to dark on first load
   if (savedTheme === 'dark') {
-    themeSwitch.checked = false;
+    themeSwitch.checked = false; // Should be true for dark theme
     document.body.classList.add('dark-theme');
-    document.body.classList.remove('light-theme');  // Set switch to checked for dark theme
-    document.getElementById('logo').src = './assets/logo-light.svg';
-  } else {
-    themeSwitch.checked = true;
-    document.body.classList.add('dark-theme'); // Default to dark on first load
     document.body.classList.remove('light-theme');
-    document.getElementById('logo').src = './assets/logo-dark.svg';
+    document.getElementById('logo').src = './assets/logo-light.svg'; // Use light logo
+  } else {
+    themeSwitch.checked = true; // Should be false for light theme
+    document.body.classList.add('light-theme'); // Set light theme
+    document.body.classList.remove('dark-theme');
+    document.getElementById('logo').src = './assets/logo-dark.svg'; // Use dark logo
   }
 }
 
@@ -359,8 +360,7 @@ function openEditTaskModal(task) {
   document.getElementById('desc-input').value = "";
 });
 
-// Call saveTaskChanges upon click of Save Changes button
-  /* Set up new event listeners */
+// Call saveTaskChanges
   saveTaskChangesBtn.onclick = () => {
   const updatedTask = {
     title: editTaskTitleInput.value,
@@ -376,12 +376,11 @@ function openEditTaskModal(task) {
   function deleteTaskHandler(taskId) {
     if(confirm("Are you sure you want to delete this task?")) {
       deleteTask(taskId);
-     // Remove the task element from the UI /*  */
     const taskElement = document.querySelector(`[data-task-id='${taskId}']`);
     if (taskElement) {
-      taskElement.remove();  // Remove the task element from the DOM /*  */
+      taskElement.remove();
     }
-    closeEditModal();  // Close the edit modal if open
+    closeEditModal();
     }
   }
 
@@ -397,7 +396,7 @@ function saveTaskChanges(taskId) {
   putTask(taskId, updatedTask);
 
   // Update UI task
-  const taskElement = document.querySelector(`[data-task-id='${taskId}']`); 
+  const taskElement = document.querySelector(`[data-task-id='${taskId}']`);
   if (taskElement) {
     taskElement.querySelector('h4').textContent = updatedTask.title;
 

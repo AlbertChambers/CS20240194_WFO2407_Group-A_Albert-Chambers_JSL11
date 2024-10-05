@@ -1,5 +1,5 @@
-import { getTasks,createNewTask,patchTask,putTask,deleteTask } from "./utils/taskFunctions.js";
-import {initialData} from "./initialData.js";
+import { getTasks, createNewTask, patchTask, putTask, deleteTask } from "./utils/taskFunctions.js";
+import { initialData } from "./initialData.js";
 
 /*************************************************************************************************************************************************
  * FIX BUGS!!!
@@ -127,6 +127,23 @@ function filterAndDisplayTasksByBoard(boardName) {
   });
 }
 
+function createTaskElement(task) {
+  const taskElement = document.createElement('div');
+  taskElement.classList.add('task-div');
+  taskElement.innerHTML = `
+    <h4>${task.title}</h4>
+  `;
+  taskElement.setAttribute('data-task-id', task.id);
+
+  // Add event listener for opening the edit task modal
+  taskElement.addEventListener("click", (event) => {
+    event.stopPropagation();
+    openEditTaskModal(task);
+  });
+
+  return taskElement;
+}
+
 function refreshTasksUI() {
   const tasks = getTasks();
   const filteredTasks = tasks.filter(task => task.board === activeBoard);
@@ -172,15 +189,18 @@ function styleActiveBoard(boardName) {
 fetchAndDisplayBoardsAndTasks();
 
 function addTaskToUI(task) {
-  const column = document.querySelector(`.column-div[data-status=${task.status}]`);
+  // Ensure task status has a valid value, otherwise set it to 'todo' as a default
+  const status = task.status || 'todo';
+
+  // Find the corresponding column
+  const column = document.querySelector(`.column-div[data-status="${status}"]`);
   if (!column) {
-    console.error(`Column not found for status: ${task.status}`);
+    console.error(`Column not found for status: ${status}`);
     return;
   }
 
   let tasksContainer = column.querySelector('.tasks-container');
   if (!tasksContainer) {
-
     tasksContainer = document.createElement('div');
     tasksContainer.className = 'tasks-container';
     column.appendChild(tasksContainer);
@@ -188,11 +208,9 @@ function addTaskToUI(task) {
 
   const taskElement = document.createElement('div');
   taskElement.className = 'task-div';
-  taskElement.innerHTML =  `
-  <h4>${task.title}</h4>
-  `;
-
+  taskElement.innerHTML = `<h4>${task.title}</h4>`;
   taskElement.setAttribute('data-task-id', task.id);
+
   taskElement.addEventListener("click", (event) => {
     event.stopPropagation();
     openEditTaskModal(task);
@@ -296,38 +314,37 @@ function toggleSidebar(show) {
 
 toggleSidebar()
 
-function toggleTheme() {
-  const themeSwitch = document.getElementById('switch');
-  const isDarkTheme = themeSwitch.checked;
-  const logo = document.getElementById('logo');
-
-  if (isDarkTheme) {
-    document.body.classList.add('dark-theme');
-    document.body.classList.remove('light-theme');
-    localStorage.setItem('theme', 'dark');
-    logo.src = './assets/logo-dark.svg';
-  } else {
-    document.body.classList.add('light-theme');
-    document.body.classList.remove('dark-theme');
-    localStorage.setItem('theme', 'light');
-    logo.src = './assets/logo-light.svg';
-  }
-}
 
 function setInitialTheme() {
   const savedTheme = localStorage.getItem('theme');
   const themeSwitch = document.getElementById('switch');
 
   if (savedTheme === 'dark') {
-    themeSwitch.checked = false; // Should be true for dark theme
+    themeSwitch.checked = false;
     document.body.classList.add('dark-theme');
     document.body.classList.remove('light-theme');
-    document.getElementById('logo').src = './assets/logo-light.svg'; // Use light logo
+    document.getElementById('logo').src = './assets/logo-dark.svg';
   } else {
-    themeSwitch.checked = true; // Should be false for light theme
-    document.body.classList.add('light-theme'); // Set light theme
+    themeSwitch.checked = true;
+    document.body.classList.add('light-theme');
     document.body.classList.remove('dark-theme');
-    document.getElementById('logo').src = './assets/logo-dark.svg'; // Use dark logo
+    document.getElementById('logo').src = './assets/logo-light.svg';
+  }
+}
+
+function toggleTheme() {
+  const themeSwitch = document.getElementById('switch');
+
+  if (themeSwitch.checked) {
+    document.body.classList.add('light-theme');
+    document.body.classList.remove('dark-theme');
+    localStorage.setItem('theme', 'light');
+    document.getElementById('logo').src = './assets/logo-light.svg';
+  } else {
+    document.body.classList.add('dark-theme');
+    document.body.classList.remove('light-theme');
+    localStorage.setItem('theme', 'dark');
+    document.getElementById('logo').src = './assets/logo-dark.svg';
   }
 }
 
@@ -361,7 +378,7 @@ function openEditTaskModal(task) {
 });
 
 // Call saveTaskChanges
-  saveTaskChangesBtn.onclick = () => {
+  elements.saveTaskChangesBtn.onclick = () => {
   const updatedTask = {
     title: editTaskTitleInput.value,
     description: editTaskDescInput.value,
@@ -428,10 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function init() {
-  const showSidebar = localStorage.getItem('showSideBar') === 'true';
-  const isLightTheme = localStorage.getItem('light-theme') === 'enabled';
-  document.body.classList.toggle('light-theme', isLightTheme);
   setupEventListeners();
-  toggleSidebar(showSidebar);
+  toggleSidebar();
   fetchAndDisplayBoardsAndTasks();
 }
